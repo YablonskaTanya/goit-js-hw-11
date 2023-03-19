@@ -12,7 +12,7 @@ export async function onFormSubmit(e) {
 
   const request = refs.input.value.trim();
   console.log(request);
-  let page = 1;
+  //   let page = 1;
   cleanGallery();
 
   try {
