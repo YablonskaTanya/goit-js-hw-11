@@ -73,6 +73,6 @@ export async function onClickBtnLoadMore() {
 
 function cleanGallery() {
   refs.gallery.innerHTML = '';
-  page = 1;
+
   hideBtnLoadMore();
 }
