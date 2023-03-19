@@ -49,8 +49,6 @@ export async function onFormSubmit(e) {
   e.target.reset();
 }
 
-refs.loadMoreBtn.addEventListener('click', onClickBtnLoadMore);
-
 export async function onClickBtnLoadMore() {
   const request = refs.input.value.trim();
   page += 1;
