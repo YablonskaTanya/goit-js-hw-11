@@ -1,4 +1,4 @@
-import { fetchImages, limit, page } from './fetchImages';
+import { fetchImages } from './fetchImages';
 import { refs } from './refs';
 import Notiflix from 'notiflix';
 import { createGalleryMarkup, renderGalleryMarkup } from './createmarkup';
