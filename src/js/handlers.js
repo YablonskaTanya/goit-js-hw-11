@@ -50,7 +50,7 @@ export async function onFormSubmit(e) {
 
 export async function onClickBtnLoadMore() {
   const request = refs.input.value.trim();
-  page += 1;
+  //   page += 1;
   try {
     const loadMore = await fetchImages(request);
     let totalPages = loadMore.data.totalHits;
