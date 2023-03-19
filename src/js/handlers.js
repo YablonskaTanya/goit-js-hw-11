@@ -1,7 +1,7 @@
 import { refs } from './refs';
 import Notiflix from 'notiflix';
 import { renderGalleryMarkup } from './createmarkup';
-import { fetchImages } from './fetchimages';
+import { fetchImages, page } from './fetchimages';
 
 const hideBtnLoadMore = () => (refs.loadMoreBtn.style.display = 'none');
 const showBtnLoadMore = () => (refs.loadMoreBtn.style.display = 'block');
@@ -12,7 +12,7 @@ export async function onFormSubmit(e) {
 
   const request = refs.input.value.trim();
   console.log(request);
-  page = 1;
+  let page = 1;
   cleanGallery();
 
   try {
