@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { renderGalleryMarkup } from './createmarkup';
-import { onClickBtnLoadMore, request } from './handlers';
 
 const BASE_URL = 'https://pixabay.com/api/';
 const API_Key = 'key=34532945-6dd9e50d65c600f2d5972702b';

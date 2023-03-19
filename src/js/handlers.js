@@ -1,8 +1,7 @@
-import { fetchImages } from './fetchImages';
 import { refs } from './refs';
 import Notiflix from 'notiflix';
-import { createGalleryMarkup, renderGalleryMarkup } from './createmarkup';
-import axios from 'axios';
+import { renderGalleryMarkup } from './createmarkup';
+import { fetchImages } from './fetchimages';
 
 const hideBtnLoadMore = () => (refs.loadMoreBtn.style.display = 'none');
 const showBtnLoadMore = () => (refs.loadMoreBtn.style.display = 'block');
