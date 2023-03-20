@@ -1,78 +1,87 @@
+import Notiflix, { Loading } from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+// Додатковий імпорт стилів
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import { refs } from './refs';
-import Notiflix from 'notiflix';
 import { renderGalleryMarkup } from './createmarkup';
 import { fetchImages } from './fetchimages';
+
+const lightbox = new SimpleLightbox('.gallery a');
 
 const hideBtnLoadMore = () => (refs.loadMoreBtn.style.display = 'none');
 const showBtnLoadMore = () => (refs.loadMoreBtn.style.display = 'block');
 hideBtnLoadMore();
 
+let page = 1;
+let perPage = 40;
+
 export async function onFormSubmit(e) {
   e.preventDefault();
 
-  const request = refs.input.value.trim();
-  console.log(request);
-  //   let page = 1;
+  let request = refs.form.elements.searchQuery.value.trim();
+  page = 1;
   cleanGallery();
 
-  try {
-    const images = await fetchImages(request);
-
-    let totalPages = images.data.totalHits;
-    if (totalPages === 0) {
-      hideBtnLoadMore();
-      Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    } else if (!request) {
-      hideBtnLoadMore();
-      return Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    } else if (totalPages === 1) {
-      hideBtnLoadMore();
-      Notiflix.Notify.success(`Hooray! We found ${totalPages} image.`);
-    } else if (totalPages > 1 && totalPages <= 40) {
-      hideBtnLoadMore();
-      Notiflix.Notify.success(`Hooray! We found ${totalPages} images.`);
-    } else if (totalPages > 40) {
-      showBtnLoadMore();
-      Notiflix.Notify.success(`Hooray! We found ${totalPages} images.`);
-    }
-
-    renderGalleryMarkup(images.data.hits, refs.gallery);
-  } catch (error) {
-    console.log(error);
+  if (request === '') {
+    hideBtnLoadMore();
+    return Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+  if (!request) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+    cleanGallery();
+    hideBtnLoadMore();
+    return;
   }
 
-  e.target.reset();
+  try {
+    const galleryItems = await fetchImages(request, page);
+
+    let totalPages = galleryItems.data.totalHits;
+
+    renderGalleryMarkup(galleryItems.data.hits);
+    lightbox.refresh();
+    showBtnLoadMore();
+    Notiflix.Notify.success(`Hooray! We found ${totalPages} images.`);
+  } catch (error) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+
+  // e.target.reset();
+  lightbox.refresh();
 }
 
 export async function onClickBtnLoadMore() {
-  const request = refs.input.value.trim();
-  //   page += 1;
+  page += 1;
+  let request = refs.form.elements.searchQuery.value.trim();
+
   try {
-    const loadMore = await fetchImages(request);
-    let totalPages = loadMore.data.totalHits;
+    const galleryItems = await fetchImages(request, page);
 
-    renderGalleryMarkup(loadMore.data.hits, refs.gallery);
-    if (page > totalPages) {
-      Notiflix.Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
+    const totalPages = galleryItems.data.totalHits;
+
+    if (Math.ceil(totalPages / perPage < page)) {
       hideBtnLoadMore();
-      form.reset();
+      Notify.info("We're sorry, but you've reached the end of search results.");
     }
-  } catch (error) {
-    console.log(error);
-  }
+    renderGalleryMarkup(galleryItems.data.hits);
 
-  fetchImages(request, page);
-  showBtnLoadMore();
+    showBtnLoadMore();
+  } catch (error) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+  lightbox.refresh();
 }
 
 function cleanGallery() {
   refs.gallery.innerHTML = '';
-
+  page = 1;
   hideBtnLoadMore();
 }

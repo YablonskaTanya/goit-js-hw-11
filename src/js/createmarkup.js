@@ -1,4 +1,5 @@
 import { refs } from './refs';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 export function createGalleryMarkup(images) {
   return images
@@ -12,7 +13,13 @@ export function createGalleryMarkup(images) {
         comments,
         downloads,
       }) => `<div class="photo-card">
-  <img class="img" src="${webformatURL}" alt="${tags}" loading="lazy" />
+      <a href="${largeImageURL}">
+              <img
+              class="gallery__image img"
+              src="${webformatURL}"
+              alt="${tags}"
+              loading="lazy"
+            />
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
