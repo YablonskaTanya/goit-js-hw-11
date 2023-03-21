@@ -28,31 +28,33 @@ export async function onFormSubmit(e) {
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
-  if (!request) {
-    Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-    cleanGallery();
-    hideBtnLoadMore();
-    return;
-  }
 
   try {
     const galleryItems = await fetchImages(request, page);
-
     let totalPages = galleryItems.data.totalHits;
 
+    if (galleryItems.data.hits.length === 0) {
+      cleanGallery();
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else if (totalPages >= 1 && totalPages < 40) {
+      hideBtnLoadMore();
+      Notiflix.Notify.success(`Hooray! We found ${totalPages} image.`);
+    } else if (totalPages > 40) {
+      showBtnLoadMore();
+      Notiflix.Notify.success(`Hooray! We found ${totalPages} image.`);
+    }
     renderGalleryMarkup(galleryItems.data.hits);
+
     lightbox.refresh();
-    showBtnLoadMore();
-    Notiflix.Notify.success(`Hooray! We found ${totalPages} images.`);
   } catch (error) {
+    console.log(error);
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
 
-  // e.target.reset();
   lightbox.refresh();
 }
 
@@ -62,16 +64,16 @@ export async function onClickBtnLoadMore() {
 
   try {
     const galleryItems = await fetchImages(request, page);
+    let showPages = galleryItems.data.totalHits / perPage;
 
-    const totalPages = galleryItems.data.totalHits;
-
-    if (Math.ceil(totalPages / perPage < page)) {
+    if (showPages <= page) {
       hideBtnLoadMore();
-      Notify.info("We're sorry, but you've reached the end of search results.");
+      Notiflix.Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
     }
-    renderGalleryMarkup(galleryItems.data.hits);
 
-    showBtnLoadMore();
+    renderGalleryMarkup(galleryItems.data.hits);
   } catch (error) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
